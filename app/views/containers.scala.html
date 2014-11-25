@@ -1,0 +1,114 @@
+@import play.api.libs.json.JsValue
+@import utils.Docker
+@import global._
+@(containers: List[utils.Docker.DockerContainer])
+
+
+<!doctype html>
+<html lang="en">
+@header()
+<script src="js/moment.min.js"></script>
+<script>
+    moment().format();
+</script>
+<body>
+@topnav()
+<div class="template-page-wrapper">
+@nav(3)
+
+<div class="templatemo-content-wrapper">
+<div class="templatemo-content">
+
+<h1>Docker Containers</h1>
+
+    <div class="row margin-bottom-30">
+        <div class="col-md-12">
+            <ul class="nav nav-pills">
+                <li class="active"><a href="#">All Containers <span class="badge">15</span></a></li>
+                <li><a href="#">Running Containers<span class="badge">10</span></a></li>
+                <li><a href="#">Stopped Containers <span class="badge">5</span></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group pull-right" id="templatemo_sort_btn">
+                <button type="button" class="btn btn-default">Sort by</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">created</a></li>
+                    <li><a href="#">size</a></li>
+                    <li><a href="#">repository</a></li>
+                </ul>
+            </div>
+            <div class="table-responsive">
+                <h4 class="margin-bottom-15">All Images</h4>
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Command</th>
+                        <th>Container ID</th>
+                        <th>Image</th>
+                        <th>Created</th>
+                        <th>Names</th>
+                        <th>Action</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @for(container <- containers) {
+                    <tr>
+                        <td>@container.command</td>
+                        <td>@container.idInShort</td>
+                        <td>@container.image</td>
+                        <td><script>document.write(moment.unix(@container.created).fromNow());</script></td>
+                        <td>container.name</td>
+                        <td>
+                            <!-- Split button -->
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info">Action</button>
+                                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#">Run</a></li>
+                                    <li><a href="#">Check history</a></li>
+                                    <li><a href="#">Inspect</a></li>
+                                    <li><a href="#">Tag</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td><a href="#" class="btn btn-link">Remove</a></td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <ul class="pagination pull-right">
+                <li class="disabled"><a href="#">&laquo;</a></li>
+                <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">2 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">3 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">4 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">5 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+</div>
+
+@footer()
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/templatemo_script.js"></script>
+
+</body>
+</html>

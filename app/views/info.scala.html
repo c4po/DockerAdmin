@@ -1,0 +1,60 @@
+@import play.api.libs.json.JsValue
+@import utils.Docker
+@import global._
+@(version: JsValue)
+
+
+<!doctype html>
+<html lang="en">
+@header()
+<body>
+@topnav()
+<div class="template-page-wrapper">
+@nav()
+
+<div class="templatemo-content-wrapper">
+<div class="templatemo-content">
+
+<h1>Dashboard</h1>
+
+
+<div class="templatemo-panels">
+    <div class="row">
+        <div class="col-md-6 col-sm-6 margin-bottom-30">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Docker Version</div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Docker Key</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @for(key <- Docker.info) {
+                        <tr>
+                            <td>@key</td>
+                            <td>@(version \ key)</td>
+                        </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+
+@footer()
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/templatemo_script.js"></script>
+
+</body>
+</html>
