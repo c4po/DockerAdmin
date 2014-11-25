@@ -37,34 +37,41 @@ object Docker {
   }
 
 
-  case class ContainerName(name:String)
-  case class ContainerPort(ip:Option[String], privatePort:Option[Int], publicPort:Option[Int], ipType:Option[String])
-  case class DockerContainer(command:String, created:Int, id:String, image:String,  status:String){
+  case class ContainerName(name:String){
+    override def toString:String =name
+  }
+  case class ContainerPort(ip:String, privatePort:Int, publicPort:Int, ipType:String){
+    override def toString:String = ip+":"+privatePort+"->"+publicPort+"/"+ipType
+  }
+  case class DockerContainer(command:String, created:Int, id:String, image:String,  name:Seq[ContainerName], ports:Seq[ContainerPort], status:String){
     def idInShort:String = id.toUpperCase.substring(0,12)
   }
+
+  implicit val containerNameReads: Reads[ContainerName] = {
+    JsPath.read[String].map{x => ContainerName(x)}
+  }
+
+  implicit val containerPortReads: Reads[ContainerPort] = (
+              (JsPath \"IP").read[String] and
+                (JsPath \"PrivatePort").read[Int] and
+                (JsPath \"PublicPort").read[Int] and
+                (JsPath \"Type").read[String]
+              )(ContainerPort.apply _)
+
+
+
+
 
   implicit val containersReads: Reads[DockerContainer] = (
       (JsPath \ "Command").read[String] and
         (JsPath \ "Created").read[Int] and
         (JsPath \ "Id").read[String] and
         (JsPath \ "Image").read[String] and
-        // (JsPath \ "Names").read[Seq[ContainerName]] and
-        //(JsPath \ "Ports").read[ ]and
+        (JsPath \ "Names").read[Seq[ContainerName]] and
+        (JsPath \ "Ports").read[Seq[ContainerPort]] and
         (JsPath \ "Status").read[String]
       )(DockerContainer.apply _)
 
-  implicit val containerNameReads: Reads[ContainerName] = {
-    JsPath.read[String].map(ContainerName.apply _)
-  }
-  implicit val containerPortReads: Reads[ContainerPort] = {
-    //JsPath.as[List[JsObject]]
-    (
-      (JsPath \"IP").readNullable[String] and
-        (JsPath \"PrivatePort").readNullable[Int] and
-        (JsPath \"PublicPort").readNullable[Int] and
-        (JsPath \"Type").readNullable[String]
-      )(ContainerPort.apply _)
-  }
 
 //  name:Seq[ContainerName], ports:Seq[ContainerPort],
 

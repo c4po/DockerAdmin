@@ -1,11 +1,13 @@
 package controllers
-import scala.concurrent.ExecutionContext.Implicits.global
+
+import play.api.Logger
 import play.api.Play.current
 import play.api.libs.json.{JsValue, _}
 import play.api.libs.ws._
 import play.api.mvc.{Action, Controller}
 import utils.Docker.{DockerContainer, DockerImage}
-import play.api.Logger
+
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object Application extends Controller {
@@ -19,7 +21,7 @@ object Application extends Controller {
   }
 
   def images = Action.async {
-    getImages.map( images => Ok(views.html.images(images.flatten)))
+    getImages.map(images => Ok(views.html.images(images.flatten)))
   }
 
   def containers = Action.async {
@@ -30,7 +32,7 @@ object Application extends Controller {
     WS.url("http://10.102.144.60:4243/images/json").get()
       .map { response =>
       (response.json).as[List[JsObject]]
-        .map({ i =>
+        .map { i =>
         i.validate[DockerImage] match {
           case s: JsSuccess[DockerImage] => {
             Some(s.get)
@@ -40,7 +42,7 @@ object Application extends Controller {
             None
           }
         }
-      })
+      }
     }
   }
 
@@ -48,9 +50,7 @@ object Application extends Controller {
     WS.url("http://10.102.144.60:4243/containers/json?all=1").get()
       .map { response =>
       (response.json).as[List[JsObject]]
-        .map({ i =>
-        val m= i.validate[DockerImage]
-        val n= i.validate[DockerContainer]
+        .map { i =>
         i.validate[DockerContainer] match {
           case s: JsSuccess[DockerContainer] => {
             Some(s.get)
@@ -60,7 +60,7 @@ object Application extends Controller {
             None
           }
         }
-      })
+      }
     }
   }
 
